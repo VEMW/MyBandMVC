@@ -23,11 +23,20 @@ function get_articles() {
 
 function get_some_articles() {
     global $pageno;
+    global $searchterm;
     $mysqli = make_connection();
-    $firstrow = ($pageno -1) * ARTICLES_PER_PAGE;
+    $firstrow = ($pageno - 1) * ARTICLES_PER_PAGE;
     $per_page = ARTICLES_PER_PAGE;
-    $query = "SELECT title, content, imagelink FROM articles ORDER BY article_id DESC LIMIT $firstrow,$per_page";
+
+    $query =    "SELECT title, content, imagelink ";
+    $query .=   "FROM articles ";
+    $query .=   "WHERE title LIKE ? OR ";
+    $query .=   "content LIKE ? ";
+    $query .=   "ORDER BY article_id ";
+    $query .=   "DESC LIMIT $firstrow,$per_page";
+
     $stmt = $mysqli->prepare($query) or die ('Error preparing 1.');
+    $stmt->bind_param('ss', $searchterm, $searchterm) or die ('Error binding searchterm.');
     $stmt->bind_result($title, $content, $imagelink) or die ('Error binding results 1.');
     $stmt->execute() or die ('Error executing 1.');
     $results = array();
@@ -39,6 +48,16 @@ function get_some_articles() {
         $results[] = $article;
     }
     return $results;
+}
+
+function verify_login() {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // TO DO: ZOEKEN IN DE DATABASE OF DE USER BESTAAT
+    if ($username == 'admin' && $password == 'admin');
+    setcookie('username',$username,time() + 3600 * 24);
+    $_SESSION['username'] = $username;
 }
 
 function get_number_of_pages() {

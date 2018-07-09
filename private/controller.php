@@ -25,6 +25,7 @@ function contact_action() {
 function news_action() {
     global $smarty;
     global $pageno;
+    global $searchterm;
     //model
     $articles = get_some_articles();
     $number_of_pages = get_number_of_pages();
@@ -36,6 +37,31 @@ function news_action() {
     $smarty->display('news.tpl');
     $smarty->display('footer.tpl');
 }
+
+function show_loginform() {
+    global $smarty;
+    $smarty->display('loginform.tpl');
+}
+
+function verify_login_action() {
+    verify_login();
+}
+
+function cms_action(){
+    global $smarty;
+    $smarty->display('inlogformulier.tpl');
+}
+
+function logout_action() {
+    setcookie('username', '', time() - 3600);
+    $_SESSION = array();
+    header("Location: index.php");
+}
+
+function beheer_action() {
+    
+}
+
 
 
 
